@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Video Agent — Tavus Embed</title>
+  <meta name="description" content="Embedded Tavus Conversational Video Interface (CVI) — mobile‑first landing page with QR and brand watermark." />
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --fg: #e8eef4;
+      --muted: #9fb2c7;
+      --accent: #6be3ff;
+      --card: #10171f;
+      --shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 70% -10%, rgba(107,227,255,.06), transparent 60%),
+                  radial-gradient(800px 600px at 0% 100%, rgba(107,227,255,.05), transparent 60%),
+                  var(--bg);
+      color: var(--fg);
+    }
+    .wrap { min-height: 100%; display: grid; grid-template-rows: auto 1fr auto; }
+    header { position: sticky; top: 0; backdrop-filter: saturate(140%) blur(8px); background: rgba(11,15,20,.6); border-bottom: 1px solid rgba(255,255,255,.06); }
+    .nav { max-width: 1000px; margin: 0 auto; padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
+    .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: .3px; }
+    .brand img { width: 28px; height: 28px; border-radius: 12px; box-shadow: var(--shadow); }
+    .muted { color: var(--muted); }
+    .container { max-width: 1000px; margin: 18px auto; padding: 12px; }
+    .hero { display: grid; gap: 14px; }
+    .card { background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03)); border: 1px solid rgba(255,255,255,.08); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; }
+    .pad { padding: 16px; }
+    h1 { font-size: clamp(22px, 3.5vw, 36px); margin: 0 0 4px; }
+    p { margin: 0; line-height: 1.5; }
+    .cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+    .btn { appearance: none; border: 0; padding: 12px 14px; border-radius: 14px; background: var(--accent); color: #00131a; font-weight: 700; box-shadow: var(--shadow); cursor: pointer; }
+    .btn.secondary { background: transparent; color: var(--fg); border: 1px solid rgba(255,255,255,.14); }
+
+    /* Embed area */
+    .embed-wrap { position: relative; aspect-ratio: 9/16; width: 100%; background: #0a0f14; border-top-left-radius: 18px; border-top-right-radius: 18px; }
+    .embed { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .watermark { position: absolute; right: 10px; bottom: 10px; width: 44px; height: 44px; opacity: .85; border-radius: 14px; background: rgba(255,255,255,.9); display: grid; place-items: center; }
+    .watermark img { width: 34px; height: 34px; display: block; }
+
+    /* QR block */
+    .qr { display: grid; grid-template-columns: 130px 1fr; gap: 16px; align-items: center; }
+    .qr img { width: 130px; height: 130px; background: #fff; border-radius: 12px; }
+
+    footer { color: var(--muted); font-size: 13px; padding: 16px; display: flex; justify-content: center; align-items: center; gap: 8px; border-top: 1px solid rgba(255,255,255,.06); }
+    footer .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: inline-block; }
+
+    /* Small screens */
+    @media (min-width: 880px) {
+      .hero { grid-template-columns: 1.1fr .9fr; align-items: stretch; }
+      .embed-wrap { aspect-ratio: 16/9; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="nav">
+        <div class="brand"><img src="STHead.png" alt="Strange Thoughts watermark"/> Tavus Agent Demo</div>
+        <div class="muted" style="margin-left:auto">Embed Preview</div>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="hero">
+        <!-- Left: the Tavus embed -->
+        <div class="card">
+          <div class="embed-wrap">
+            <!--
+              EASIEST: Use the conversation_url you get back from Tavus "Create Conversation" API.
+              Docs: https://docs.tavus.io/api-reference/conversations/create-conversation
+              For static hosting, you can paste a pre-created URL below or pass it in via ?c= query param.
+            -->
+            <iframe id="tavus-iframe" class="embed" allow="camera; microphone; autoplay; display-capture; clipboard-read; clipboard-write;" referrerpolicy="no-referrer" loading="lazy"></iframe>
+            <div class="watermark" title="Powered by Strange Thoughts"><img src="STHead.png" alt="ST"/></div>
+          </div>
+          <div class="pad">
+            <div class="muted">If the call UI doesn’t load, ensure the Daily/Tavus domain is allowed in your browser/network and that this page is hosted on a permitted origin in your Tavus project settings.</div>
+          </div>
+        </div>
+
+        <!-- Right: copy + actions -->
+        <div class="card pad">
+          <h1>Talk to the Agent</h1>
+          <p class="muted">This page embeds a Tavus Conversational Video Interface (CVI) session inside a responsive, mobile‑first layout. Drop this into GitHub Pages and share the QR.</p>
+          <div class="cta">
+            <button id="startBtn" class="btn">Start Conversation</button>
+            <button id="swapBtn" class="btn secondary">Use Custom URL</button>
+          </div>
+          <div style="margin-top:14px">
+            <label for="customUrl" style="display:block; font-size:14px; color:var(--muted); margin-bottom:6px">Conversation URL</label>
+            <input id="customUrl" type="url" placeholder="https://tavus.daily.co/c123456" style="width:100%; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.06); color:var(--fg)"/>
+            <small class="muted">Tip: Generate this URL server‑side via Tavus API, then inject it at build time or pass as a query param <code>?c=...</code> to avoid exposing API keys.</small>
+          </div>
+
+          <hr style="margin:18px 0; border:0; border-top:1px solid rgba(255,255,255,.08)">
+
+          <div class="qr">
+            <img id="qrImg" alt="QR code" src="qr.png" onerror="this.style.display='none'"/>
+            <div>
+              <strong>Scan to open on mobile</strong>
+              <p class="muted">Optional QR generated as <code>qr.png</code>. Replace with your own or remove this block. </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span class="dot"></span>
+      <span>Powered by Strange Thoughts</span>
+    </footer>
+  </div>
+
+  <script>
+    // Read ?c=<conversation_url> from the query string
+    const params = new URLSearchParams(location.search);
+    const qUrl = params.get('c');
+    // Fallback demo URL placeholder (replace this with a real one when you create a conversation)
+    const DEFAULT_URL = 'https://platform.tavus.io/conversations/room?url=https%3A%2F%2Ftavus.daily.co%2Fc2f6a0307bff04c2';
+
+    const iframe = document.getElementById('tavus-iframe');
+    const input = document.getElementById('customUrl');
+    const startBtn = document.getElementById('startBtn');
+    const swapBtn = document.getElementById('swapBtn');
+
+    function setSrc(u) {
+      if (!u) return;
+      // The Daily/Tavus room must be https and allow embedding; append minimal args for mobile UX
+      iframe.src = u + (u.includes('?') ? '&' : '?') + 'emb=1';
+    }
+
+    const initial = qUrl || DEFAULT_URL;
+    if (initial) {
+      input.value = initial;
+      setSrc(initial);
+    }
+
+    startBtn.addEventListener('click', () => setSrc(input.value.trim()));
+    swapBtn.addEventListener('click', () => {
+      const u = prompt('Paste a Tavus conversation URL (e.g. https://tavus.daily.co/c123456)');
+      if (u) { input.value = u; setSrc(u); }
+    });
+  </script>
+</body>
+</html>
